@@ -1,0 +1,922 @@
+[
+    {
+        "@id": "#RightKidney_ModelDS",
+        "@type": "DataSource",
+        "baseURL": "#_urlBase",
+        "mimeType": "application/octet-stream",
+        "source": "models/Model_42_RightKidney.vtk"
+    },
+    {
+        "@id": "#_LabelDS",
+        "@type": "DataSource",
+        "baseURL": "#_urlBase",
+        "mimeType": "application/x-nrrd",
+        "source": "volumes/labels/combined.nrrd"
+    },
+    {
+        "@id": "#MiddleHepaticVein_and_Branches",
+        "@type": "Structure",
+        "annotation": {
+            "name": "Intermediate hepatic vein"
+        },
+        "renderOption": {
+            "color": "rgb(230,128,128)"
+        },
+        "sourceSelector": [
+            {
+                "@type": [
+                    "Selector",
+                    "GeometrySelector"
+                ],
+                "authoritative": false,
+                "dataSource": "#MiddleHepaticVein_and_Branches_ModelDS"
+            },
+            {
+                "@type": [
+                    "Selector",
+                    "LabelMapSelector"
+                ],
+                "authoritative": true,
+                "dataKey": 5,
+                "dataSource": "#_LabelDS"
+            }
+        ]
+    },
+    {
+        "@id": "#RightHepaticVein_and_Branches_ModelDS",
+        "@type": "DataSource",
+        "baseURL": "#_urlBase",
+        "mimeType": "application/octet-stream",
+        "source": "models/Model_6_RightHepaticVein_and_Branches.vtk"
+    },
+    {
+        "@id": "#LiverSegment_IVb_ModelDS",
+        "@type": "DataSource",
+        "baseURL": "#_urlBase",
+        "mimeType": "application/octet-stream",
+        "source": "models/Model_17_LiverSegment_IVb.vtk"
+    },
+    {
+        "@id": "#LiverSegment_IVa_ModelDS",
+        "@type": "DataSource",
+        "baseURL": "#_urlBase",
+        "mimeType": "application/octet-stream",
+        "source": "models/Model_15_LiverSegment_IVa.vtk"
+    },
+    {
+        "@id": "#IVC",
+        "@type": "Structure",
+        "annotation": {
+            "name": "Inferior vena cava"
+        },
+        "renderOption": {
+            "color": "rgb(51,128,204)"
+        },
+        "sourceSelector": [
+            {
+                "@type": [
+                    "Selector",
+                    "GeometrySelector"
+                ],
+                "authoritative": false,
+                "dataSource": "#IVC_ModelDS"
+            },
+            {
+                "@type": [
+                    "Selector",
+                    "LabelMapSelector"
+                ],
+                "authoritative": true,
+                "dataKey": 1,
+                "dataSource": "#_LabelDS"
+            }
+        ]
+    },
+    {
+        "@id": "#LiverSegment_I_ModelDS",
+        "@type": "DataSource",
+        "baseURL": "#_urlBase",
+        "mimeType": "application/octet-stream",
+        "source": "models/Model_18_LiverSegment_I.vtk"
+    },
+    {
+        "@id": "#LiverSegment_VII",
+        "@type": "Structure",
+        "annotation": {
+            "name": "Liver Segment VII"
+        },
+        "renderOption": {
+            "color": "rgb(128,204,51)"
+        },
+        "sourceSelector": [
+            {
+                "@type": [
+                    "Selector",
+                    "GeometrySelector"
+                ],
+                "authoritative": false,
+                "dataSource": "#LiverSegment_VII_ModelDS"
+            },
+            {
+                "@type": [
+                    "Selector",
+                    "LabelMapSelector"
+                ],
+                "authoritative": true,
+                "dataKey": 26,
+                "dataSource": "#_LabelDS"
+            }
+        ]
+    },
+    {
+        "@id": "#_urlBase",
+        "@type": "BaseURL",
+        "url": ""
+    },
+    {
+        "@id": "#LeftHepaticVein_and_Branches",
+        "@type": "Structure",
+        "annotation": {
+            "name": "Left hepatic vein"
+        },
+        "renderOption": {
+            "color": "rgb(102,179,255)"
+        },
+        "sourceSelector": [
+            {
+                "@type": [
+                    "Selector",
+                    "GeometrySelector"
+                ],
+                "authoritative": false,
+                "dataSource": "#LeftHepaticVein_and_Branches_ModelDS"
+            },
+            {
+                "@type": [
+                    "Selector",
+                    "LabelMapSelector"
+                ],
+                "authoritative": true,
+                "dataKey": 4,
+                "dataSource": "#_LabelDS"
+            }
+        ]
+    },
+    {
+        "@id": "#__header__",
+        "@type": "Header",
+        "backgroundImage": [
+            "#_bgImageSrc0"
+        ],
+        "root": [
+            "#Liver_Segments",
+            "#Liver_Veins_and_Branches",
+            "#Aorta",
+            "#IVC",
+            "#MainPortalVein",
+            "#Other_Organs"
+        ],
+        "title": "SPL Liver Atlas",
+        "contact": "https://openanatomy.org"
+    },
+    {
+        "@id": "#Liver_Veins_and_Branches",
+        "@type": "Group",
+        "annotation": {
+            "name": "Liver Veins and Branches"
+        },
+        "member": [
+            "#LeftHepaticVein_and_Branches",
+            "#MiddleHepaticVein_and_Branches",
+            "#RightHepaticVein_and_Branches",
+            "#LeftPortalVein_and_Branches",
+            "#RightPortalVein_and_Branches",
+            "#CaudateVeins"
+        ],
+        "renderOption": {
+            "color": "rgb(127,127,127)"
+        }
+    },
+    {
+        "@id": "#Other_Organs",
+        "@type": "Group",
+        "annotation": {
+            "name": "Other Organs"
+        },
+        "member": [
+            "#Gallbladder",
+            "#LeftKidney",
+            "#RightKidney",
+            "#Spleen",
+            "#Stomach"
+        ],
+        "renderOption": {
+            "color": "rgb(127,127,127)"
+        }
+    },
+    {
+        "@id": "#Liver_Segments",
+        "@type": "Group",
+        "annotation": {
+            "name": "Liver Segments"
+        },
+        "member": [
+            "#LiverSegment_II",
+            "#LiverSegment_I",
+            "#LiverSegment_VII",
+            "#LiverSegment_III",
+            "#LiverSegment_VIII",
+            "#LiverSegment_V",
+            "#LiverSegment_IVb",
+            "#LiverSegment_IVa",
+            "#LiverSegment_VI"
+        ],
+        "renderOption": {
+            "color": "rgb(127,127,127)"
+        }
+    },
+    {
+        "@id": "#LiverSegment_VI_ModelDS",
+        "@type": "DataSource",
+        "baseURL": "#_urlBase",
+        "mimeType": "application/octet-stream",
+        "source": "models/Model_12_LiverSegment_VI.vtk"
+    },
+    {
+        "@id": "#MainPortalVein",
+        "@type": "Structure",
+        "annotation": {
+            "name": "Main portal vein"
+        },
+        "renderOption": {
+            "color": "rgb(160,160,160)"
+        },
+        "sourceSelector": [
+            {
+                "@type": [
+                    "Selector",
+                    "GeometrySelector"
+                ],
+                "authoritative": false,
+                "dataSource": "#MainPortalVein_ModelDS"
+            },
+            {
+                "@type": [
+                    "Selector",
+                    "LabelMapSelector"
+                ],
+                "authoritative": true,
+                "dataKey": 3,
+                "dataSource": "#_LabelDS"
+            }
+        ]
+    },
+    {
+        "@id": "#Spleen",
+        "@type": "Structure",
+        "annotation": {
+            "name": "Spleen"
+        },
+        "renderOption": {
+            "color": "rgb(89,79,160)"
+        },
+        "sourceSelector": [
+            {
+                "@type": [
+                    "Selector",
+                    "GeometrySelector"
+                ],
+                "authoritative": false,
+                "dataSource": "#Spleen_ModelDS"
+            },
+            {
+                "@type": [
+                    "Selector",
+                    "LabelMapSelector"
+                ],
+                "authoritative": true,
+                "dataKey": 44,
+                "dataSource": "#_LabelDS"
+            }
+        ]
+    },
+    {
+        "@id": "#CaudateVeins",
+        "@type": "Structure",
+        "annotation": {
+            "name": "Caudate veins"
+        },
+        "renderOption": {
+            "color": "rgb(255,204,179)"
+        },
+        "sourceSelector": [
+            {
+                "@type": [
+                    "Selector",
+                    "GeometrySelector"
+                ],
+                "authoritative": false,
+                "dataSource": "#CaudateVeins_ModelDS"
+            },
+            {
+                "@type": [
+                    "Selector",
+                    "LabelMapSelector"
+                ],
+                "authoritative": true,
+                "dataKey": 2,
+                "dataSource": "#_LabelDS"
+            }
+        ]
+    },
+    {
+        "@id": "#LiverSegment_VIII_ModelDS",
+        "@type": "DataSource",
+        "baseURL": "#_urlBase",
+        "mimeType": "application/octet-stream",
+        "source": "models/Model_33_LiverSegment_VIII.vtk"
+    },
+    {
+        "@id": "#LiverSegment_II_ModelDS",
+        "@type": "DataSource",
+        "baseURL": "#_urlBase",
+        "mimeType": "application/octet-stream",
+        "source": "models/Model_9_LiverSegment_II.vtk"
+    },
+    {
+        "@id": "#_bgImageSrc0",
+        "@type": "DataSource",
+        "baseURL": "#_urlBase",
+        "mimeType": "application/x-nrrd",
+        "source": "volumes/grayscale/IM-0001-0015.dcm.nrrd"
+    },
+    {
+        "@id": "#Stomach",
+        "@type": "Structure",
+        "annotation": {
+            "name": "Stomach"
+        },
+        "renderOption": {
+            "color": "rgb(255,209,172)"
+        },
+        "sourceSelector": [
+            {
+                "@type": [
+                    "Selector",
+                    "GeometrySelector"
+                ],
+                "authoritative": false,
+                "dataSource": "#Stomach_ModelDS"
+            },
+            {
+                "@type": [
+                    "Selector",
+                    "LabelMapSelector"
+                ],
+                "authoritative": true,
+                "dataKey": 41,
+                "dataSource": "#_LabelDS"
+            }
+        ]
+    },
+    {
+        "@id": "#LiverSegment_V_ModelDS",
+        "@type": "DataSource",
+        "baseURL": "#_urlBase",
+        "mimeType": "application/octet-stream",
+        "source": "models/Model_24_LiverSegment_V.vtk"
+    },
+    {
+        "@id": "#LeftHepaticVein_and_Branches_ModelDS",
+        "@type": "DataSource",
+        "baseURL": "#_urlBase",
+        "mimeType": "application/octet-stream",
+        "source": "models/Model_4_LeftHepaticVein_and_Branches.vtk"
+    },
+    {
+        "@id": "#LeftKidney_ModelDS",
+        "@type": "DataSource",
+        "baseURL": "#_urlBase",
+        "mimeType": "application/octet-stream",
+        "source": "models/Model_43_LeftKidney.vtk"
+    },
+    {
+        "@id": "#IVC_ModelDS",
+        "@type": "DataSource",
+        "baseURL": "#_urlBase",
+        "mimeType": "application/octet-stream",
+        "source": "models/Model_1_IVC.vtk"
+    },
+    {
+        "@id": "#LiverSegment_I",
+        "@type": "Structure",
+        "annotation": {
+            "name": "Liver Segment I"
+        },
+        "renderOption": {
+            "color": "rgb(204,204,51)"
+        },
+        "sourceSelector": [
+            {
+                "@type": [
+                    "Selector",
+                    "GeometrySelector"
+                ],
+                "authoritative": false,
+                "dataSource": "#LiverSegment_I_ModelDS"
+            },
+            {
+                "@type": [
+                    "Selector",
+                    "LabelMapSelector"
+                ],
+                "authoritative": true,
+                "dataKey": 18,
+                "dataSource": "#_LabelDS"
+            }
+        ]
+    },
+    {
+        "@id": "#LeftPortalVein_and_Branches_ModelDS",
+        "@type": "DataSource",
+        "baseURL": "#_urlBase",
+        "mimeType": "application/octet-stream",
+        "source": "models/Model_7_LeftPortalVein_and_Branches.vtk"
+    },
+    {
+        "@id": "#LeftKidney",
+        "@type": "Structure",
+        "annotation": {
+            "name": "Left kidney"
+        },
+        "renderOption": {
+            "color": "rgb(219,200,209)"
+        },
+        "sourceSelector": [
+            {
+                "@type": [
+                    "Selector",
+                    "GeometrySelector"
+                ],
+                "authoritative": false,
+                "dataSource": "#LeftKidney_ModelDS"
+            },
+            {
+                "@type": [
+                    "Selector",
+                    "LabelMapSelector"
+                ],
+                "authoritative": true,
+                "dataKey": 43,
+                "dataSource": "#_LabelDS"
+            }
+        ]
+    },
+    {
+        "@id": "#LiverSegment_V",
+        "@type": "Structure",
+        "annotation": {
+            "name": "Liver Segment V"
+        },
+        "renderOption": {
+            "color": "rgb(204,51,128)"
+        },
+        "sourceSelector": [
+            {
+                "@type": [
+                    "Selector",
+                    "GeometrySelector"
+                ],
+                "authoritative": false,
+                "dataSource": "#LiverSegment_V_ModelDS"
+            },
+            {
+                "@type": [
+                    "Selector",
+                    "LabelMapSelector"
+                ],
+                "authoritative": true,
+                "dataKey": 24,
+                "dataSource": "#_LabelDS"
+            }
+        ]
+    },
+    {
+        "@id": "#LiverSegment_IVb",
+        "@type": "Structure",
+        "annotation": {
+            "name": "Liver Segment IVb"
+        },
+        "renderOption": {
+            "color": "rgb(51,51,204)"
+        },
+        "sourceSelector": [
+            {
+                "@type": [
+                    "Selector",
+                    "GeometrySelector"
+                ],
+                "authoritative": false,
+                "dataSource": "#LiverSegment_IVb_ModelDS"
+            },
+            {
+                "@type": [
+                    "Selector",
+                    "LabelMapSelector"
+                ],
+                "authoritative": true,
+                "dataKey": 17,
+                "dataSource": "#_LabelDS"
+            }
+        ]
+    },
+    {
+        "@id": "#LiverSegment_IVa",
+        "@type": "Structure",
+        "annotation": {
+            "name": "Liver Segment IVa"
+        },
+        "renderOption": {
+            "color": "rgb(128,51,204)"
+        },
+        "sourceSelector": [
+            {
+                "@type": [
+                    "Selector",
+                    "GeometrySelector"
+                ],
+                "authoritative": false,
+                "dataSource": "#LiverSegment_IVa_ModelDS"
+            },
+            {
+                "@type": [
+                    "Selector",
+                    "LabelMapSelector"
+                ],
+                "authoritative": true,
+                "dataKey": 15,
+                "dataSource": "#_LabelDS"
+            }
+        ]
+    },
+    {
+        "@id": "#LiverSegment_VIII",
+        "@type": "Structure",
+        "annotation": {
+            "name": "Liver Segment VIII"
+        },
+        "renderOption": {
+            "color": "rgb(204,128,51)"
+        },
+        "sourceSelector": [
+            {
+                "@type": [
+                    "Selector",
+                    "GeometrySelector"
+                ],
+                "authoritative": false,
+                "dataSource": "#LiverSegment_VIII_ModelDS"
+            },
+            {
+                "@type": [
+                    "Selector",
+                    "LabelMapSelector"
+                ],
+                "authoritative": true,
+                "dataKey": 33,
+                "dataSource": "#_LabelDS"
+            }
+        ]
+    },
+    {
+        "@id": "#MiddleHepaticVein_and_Branches_ModelDS",
+        "@type": "DataSource",
+        "baseURL": "#_urlBase",
+        "mimeType": "application/octet-stream",
+        "source": "models/Model_5_MiddleHepaticVein_and_Branches.vtk"
+    },
+    {
+        "@id": "#RightKidney",
+        "@type": "Structure",
+        "annotation": {
+            "name": "Right kidney"
+        },
+        "renderOption": {
+            "color": "rgb(219,200,209)"
+        },
+        "sourceSelector": [
+            {
+                "@type": [
+                    "Selector",
+                    "GeometrySelector"
+                ],
+                "authoritative": false,
+                "dataSource": "#RightKidney_ModelDS"
+            },
+            {
+                "@type": [
+                    "Selector",
+                    "LabelMapSelector"
+                ],
+                "authoritative": true,
+                "dataKey": 42,
+                "dataSource": "#_LabelDS"
+            }
+        ]
+    },
+    {
+        "@id": "#Spleen_ModelDS",
+        "@type": "DataSource",
+        "baseURL": "#_urlBase",
+        "mimeType": "application/octet-stream",
+        "source": "models/Model_44_Spleen.vtk"
+    },
+    {
+        "@id": "#RightPortalVein_and_Branches",
+        "@type": "Structure",
+        "annotation": {
+            "name": "Right branch of portal vein"
+        },
+        "renderOption": {
+            "color": "rgb(230,230,128)"
+        },
+        "sourceSelector": [
+            {
+                "@type": [
+                    "Selector",
+                    "GeometrySelector"
+                ],
+                "authoritative": false,
+                "dataSource": "#RightPortalVein_and_Branches_ModelDS"
+            },
+            {
+                "@type": [
+                    "Selector",
+                    "LabelMapSelector"
+                ],
+                "authoritative": true,
+                "dataKey": 8,
+                "dataSource": "#_LabelDS"
+            }
+        ]
+    },
+    {
+        "@id": "#Gallbladder_ModelDS",
+        "@type": "DataSource",
+        "baseURL": "#_urlBase",
+        "mimeType": "application/octet-stream",
+        "source": "models/Model_40_Gallbladder.vtk"
+    },
+    {
+        "@id": "#Gallbladder",
+        "@type": "Structure",
+        "annotation": {
+            "name": "Gallbladder"
+        },
+        "renderOption": {
+            "color": "rgb(54,100,54)"
+        },
+        "sourceSelector": [
+            {
+                "@type": [
+                    "Selector",
+                    "GeometrySelector"
+                ],
+                "authoritative": false,
+                "dataSource": "#Gallbladder_ModelDS"
+            },
+            {
+                "@type": [
+                    "Selector",
+                    "LabelMapSelector"
+                ],
+                "authoritative": true,
+                "dataKey": 40,
+                "dataSource": "#_LabelDS"
+            }
+        ]
+    },
+    {
+        "@id": "#Aorta_ModelDS",
+        "@type": "DataSource",
+        "baseURL": "#_urlBase",
+        "mimeType": "application/octet-stream",
+        "source": "models/Model_45_Aorta.vtk"
+    },
+    {
+        "@id": "#LiverSegment_II",
+        "@type": "Structure",
+        "annotation": {
+            "name": "Liver Segment II"
+        },
+        "renderOption": {
+            "color": "rgb(230,179,230)"
+        },
+        "sourceSelector": [
+            {
+                "@type": [
+                    "Selector",
+                    "GeometrySelector"
+                ],
+                "authoritative": false,
+                "dataSource": "#LiverSegment_II_ModelDS"
+            },
+            {
+                "@type": [
+                    "Selector",
+                    "LabelMapSelector"
+                ],
+                "authoritative": true,
+                "dataKey": 9,
+                "dataSource": "#_LabelDS"
+            }
+        ]
+    },
+    {
+        "@id": "#MainPortalVein_ModelDS",
+        "@type": "DataSource",
+        "baseURL": "#_urlBase",
+        "mimeType": "application/octet-stream",
+        "source": "models/Model_3_MainPortalVein.vtk"
+    },
+    {
+        "@id": "#LiverSegment_VII_ModelDS",
+        "@type": "DataSource",
+        "baseURL": "#_urlBase",
+        "mimeType": "application/octet-stream",
+        "source": "models/Model_26_LiverSegment_VII.vtk"
+    },
+    {
+        "@id": "#Stomach_ModelDS",
+        "@type": "DataSource",
+        "baseURL": "#_urlBase",
+        "mimeType": "application/octet-stream",
+        "source": "models/Model_41_Stomach.vtk"
+    },
+    {
+        "@id": "#Aorta",
+        "@type": "Structure",
+        "annotation": {
+            "name": "Aorta"
+        },
+        "renderOption": {
+            "color": "rgb(160,10,59)"
+        },
+        "sourceSelector": [
+            {
+                "@type": [
+                    "Selector",
+                    "GeometrySelector"
+                ],
+                "authoritative": false,
+                "dataSource": "#Aorta_ModelDS"
+            },
+            {
+                "@type": [
+                    "Selector",
+                    "LabelMapSelector"
+                ],
+                "authoritative": true,
+                "dataKey": 45,
+                "dataSource": "#_LabelDS"
+            }
+        ]
+    },
+    {
+        "@id": "#LiverSegment_III_ModelDS",
+        "@type": "DataSource",
+        "baseURL": "#_urlBase",
+        "mimeType": "application/octet-stream",
+        "source": "models/Model_10_LiverSegment_III.vtk"
+    },
+    {
+        "@id": "#RightPortalVein_and_Branches_ModelDS",
+        "@type": "DataSource",
+        "baseURL": "#_urlBase",
+        "mimeType": "application/octet-stream",
+        "source": "models/Model_8_RightPortalVein_and_Branches.vtk"
+    },
+    {
+        "@id": "#LiverSegment_VI",
+        "@type": "Structure",
+        "annotation": {
+            "name": "Liver Segment VI"
+        },
+        "renderOption": {
+            "color": "rgb(51,204,128)"
+        },
+        "sourceSelector": [
+            {
+                "@type": [
+                    "Selector",
+                    "GeometrySelector"
+                ],
+                "authoritative": false,
+                "dataSource": "#LiverSegment_VI_ModelDS"
+            },
+            {
+                "@type": [
+                    "Selector",
+                    "LabelMapSelector"
+                ],
+                "authoritative": true,
+                "dataKey": 12,
+                "dataSource": "#_LabelDS"
+            }
+        ]
+    },
+    {
+        "@id": "#LeftPortalVein_and_Branches",
+        "@type": "Structure",
+        "annotation": {
+            "name": "Left branch of portal vein"
+        },
+        "renderOption": {
+            "color": "rgb(128,230,230)"
+        },
+        "sourceSelector": [
+            {
+                "@type": [
+                    "Selector",
+                    "GeometrySelector"
+                ],
+                "authoritative": false,
+                "dataSource": "#LeftPortalVein_and_Branches_ModelDS"
+            },
+            {
+                "@type": [
+                    "Selector",
+                    "LabelMapSelector"
+                ],
+                "authoritative": true,
+                "dataKey": 7,
+                "dataSource": "#_LabelDS"
+            }
+        ]
+    },
+    {
+        "@id": "#CaudateVeins_ModelDS",
+        "@type": "DataSource",
+        "baseURL": "#_urlBase",
+        "mimeType": "application/octet-stream",
+        "source": "models/Model_2_CaudateVeins.vtk"
+    },
+    {
+        "@id": "#RightHepaticVein_and_Branches",
+        "@type": "Structure",
+        "annotation": {
+            "name": "Right hepatic vein"
+        },
+        "renderOption": {
+            "color": "rgb(128,230,128)"
+        },
+        "sourceSelector": [
+            {
+                "@type": [
+                    "Selector",
+                    "GeometrySelector"
+                ],
+                "authoritative": false,
+                "dataSource": "#RightHepaticVein_and_Branches_ModelDS"
+            },
+            {
+                "@type": [
+                    "Selector",
+                    "LabelMapSelector"
+                ],
+                "authoritative": true,
+                "dataKey": 6,
+                "dataSource": "#_LabelDS"
+            }
+        ]
+    },
+    {
+        "@id": "#LiverSegment_III",
+        "@type": "Structure",
+        "annotation": {
+            "name": "Liver Segment III"
+        },
+        "renderOption": {
+            "color": "rgb(230,230,128)"
+        },
+        "sourceSelector": [
+            {
+                "@type": [
+                    "Selector",
+                    "GeometrySelector"
+                ],
+                "authoritative": false,
+                "dataSource": "#LiverSegment_III_ModelDS"
+            },
+            {
+                "@type": [
+                    "Selector",
+                    "LabelMapSelector"
+                ],
+                "authoritative": true,
+                "dataKey": 10,
+                "dataSource": "#_LabelDS"
+            }
+        ]
+    }
+]

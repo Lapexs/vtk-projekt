@@ -1,0 +1,26 @@
+# Color table file /tmp/Slicer/__BundleSaveTemp-2014-02-20_16+25+26.903/2014-02-20-Scene/Data/liver-segments.ctbl
+# 46 values
+0 background 0 0 0 0
+1 IVC 51 128 204 255
+2 CaudateVeins 255 204 179 255
+3 MainPortalVein 160 160 160 255
+4 LeftHepaticVein_and_Branches 102 179 255 255
+5 MiddleHepaticVein_and_Branches 230 128 128 255
+6 RightHepaticVein_and_Branches 128 230 128 255
+7 LeftPortalVein_and_Branches 128 230 230 255
+8 RightPortalVein_and_Branches 230 230 128 255
+9 LiverSegment_II 230 179 230 255
+10 LiverSegment_III 230 230 128 255
+12 LiverSegment_VI 51 204 128 255
+15 LiverSegment_IVa 128 51 204 255
+17 LiverSegment_IVb 51 51 204 255
+18 LiverSegment_I 204 204 51 255
+24 LiverSegment_V 204 51 128 255
+26 LiverSegment_VII 128 204 51 255
+33 LiverSegment_VIII 204 128 51 255
+40 Gallbladder 55 100 55 255
+41 Stomach 255 210 172 255
+42 RightKidney 220 200 210 255
+43 LeftKidney 220 200 210 255
+44 Spleen 90 80 160 255
+45 Aorta 160 10 60 255
