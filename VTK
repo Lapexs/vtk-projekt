@@ -1,0 +1,336 @@
+import vtk
+
+def load_nrrd_file(file_path):
+    """
+    Wczytanie pliku NRRD za pomocą vtkNrrdReader.
+    Przujmuje:
+        file_path (str): Ścieżka do pliku NRRD.
+    Zwraca:
+        vtk.vtkNrrdReader: Obiekt czytnika z wczytanym plikiem NRRD.
+    """
+    reader = vtk.vtkNrrdReader()
+    reader.SetFileName(file_path)
+    reader.Update()
+    return reader
+
+def create_outline(reader):
+    """
+    Utworzenie outline actora dla danych.
+    Zwraca:
+        vtk.vtkActor: outline actor.
+    """
+    outline_filter = vtk.vtkOutlineFilter()
+    outline_filter.SetInputConnection(reader.GetOutputPort())
+
+    mapper = vtk.vtkPolyDataMapper()
+    mapper.SetInputConnection(outline_filter.GetOutputPort())
+
+    actor = vtk.vtkActor()
+    actor.SetMapper(mapper)
+    return actor
+
+def create_segment_actor(reader, label_value, rgb, opacity=1.0, scale=(1.0, 1.0, 1.0)):
+    """
+    Utworzenie aktora dla określonego segmentu.
+    Args:
+        reader (vtk.vtkNrrdReader or vtk.vtkImageData): Czytnik danych etykiet lub dane obrazu.
+        label_value (int): Wartość koloru reprezentującej segment.
+        rgb (tuple): Kolor RGB dla segmentu.
+        opacity (float, optional): Przezroczystość segmentu. Domyślnie 1.0.
+        scale (tuple, optional): Współczynniki skalowania (x, y, z). Domyślnie (1.0, 1.0, 1.0).
+    Zwraca:
+        vtk.vtkActor: Aktor segmentu.
+    """
+    rgb_normalized = tuple(c / 255.0 for c in rgb)
+
+    temp = reader
+
+    # Usunięcie małych wysp w danych etykiet
+    island_remover = vtk.vtkImageIslandRemoval2D()
+    island_remover.SetInputConnection(temp.GetOutputPort())
+    island_remover.SetAreaThreshold(500)
+    island_remover.SetIslandValue(1)
+    island_remover.SetReplaceValue(0)
+    island_remover.Update()
+    temp = island_remover
+
+    # Resampling obrazu
+    resampler = vtk.vtkImageResample()
+    resampler.SetInputConnection(temp.GetOutputPort())
+    resampler.SetAxisMagnificationFactor(0, 1.0)
+    resampler.SetAxisMagnificationFactor(1, 1.0)
+    resampler.SetAxisMagnificationFactor(2, 1.0)
+    resampler.Update()
+    temp = resampler
+
+    # Thresholding
+    threshold = vtk.vtkImageThreshold()
+    threshold.SetInputConnection(temp.GetOutputPort())
+    threshold.ThresholdBetween(label_value, label_value)
+    threshold.SetInValue(255)
+    threshold.SetOutValue(0)
+    threshold.Update()
+    temp = threshold
+
+    # Marching cubes
+    marching_cubes = vtk.vtkMarchingCubes()
+    marching_cubes.SetInputConnection(temp.GetOutputPort())
+    marching_cubes.SetValue(0, 127)
+    temp = marching_cubes
+
+    # Transform
+    transform = vtk.vtkTransform()
+    transform.Scale(*scale)
+    tf = vtk.vtkTransformPolyDataFilter()
+    tf.SetTransform(transform)
+    tf.SetInputConnection(temp.GetOutputPort())
+    tf.Update()
+    temp = tf
+
+    # Decimation
+    decimator = vtk.vtkDecimatePro()
+    decimator.SetInputConnection(tf.GetOutputPort())
+    decimator.SetTargetReduction(1)  
+    decimator.PreserveTopologyOn()
+    decimator.Update()
+    temp = decimator
+
+    # Wygładzanie
+    smoother = vtk.vtkWindowedSincPolyDataFilter()
+    smoother.SetInputConnection(temp.GetOutputPort())
+    smoother.SetNumberOfIterations(50)
+    smoother.SetPassBand(0.001)
+    smoother.NormalizeCoordinatesOn()
+    smoother.BoundarySmoothingOn()
+    smoother.Update()
+    temp = smoother
+
+    # Normalne
+    normals = vtk.vtkPolyDataNormals()
+    normals.SetInputConnection(temp.GetOutputPort())
+    normals.SetFeatureAngle(45)
+    normals.Update()
+
+    # Mapper i actor
+    mapper = vtk.vtkPolyDataMapper()
+    mapper.SetInputConnection(temp.GetOutputPort())
+    mapper.ScalarVisibilityOff()
+
+    actor = vtk.vtkActor()
+    actor.SetMapper(mapper)
+    actor.GetProperty().SetColor(rgb_normalized)
+    actor.GetProperty().SetOpacity(opacity)
+    
+    return actor
+
+
+# Example usage in the main function would remain the same, calling create_segment_actor with additional smoothing parameters if needed.
+
+def create_lookup_table_from_segments(segments):
+    """
+    Tworzy tabelę kolorów na podstawie segmentów.
+    Args:
+        segments (dict): Słownik mapujący wartości labeli na kolory RGB.
+    Zwraca:
+        vtk.vtkLookupTable: Skonfigurowana tabela kolorów.
+    """
+    lut = vtk.vtkLookupTable()
+    lut.SetNumberOfTableValues(256)
+    lut.SetRange(0, 255)
+    
+    # Ustawienie domyślnego koloru (czarny) dla obszarów bez etykiet
+    lut.SetTableValue(0, 0, 0, 0, 0)  # Tło przezroczyste
+    
+    # Ustawienie kolorów dla segmentów
+    for label, rgb in segments.items():
+        rgb_normalized = tuple(c / 255.0 for c in rgb)
+        lut.SetTableValue(label, *rgb_normalized, 0.5)   # Półprzezroczystość
+
+    # Ustawienie pozostałych wartości na przezroczyste    
+    for i in range(max(segments.keys()) + 1, 256):
+        lut.SetTableValue(i, 0, 0, 0, 0)
+    
+    lut.Build()
+    return lut
+
+def create_plane_widget(raw_reader, label_reader, orientation, lut, interactor):
+    """
+    Tworzy płaszczyzny dla raw data i label data.
+    Args:
+        raw_reader (vtk.vtkNrrdReader): Czytnik raw data.
+        label_reader (vtk.vtkNrrdReader): Czytnik label data.
+        orientation (str): Orientacja płaszczyzn ('X', 'Y', or 'Z').
+        lut (vtk.vtkLookupTable): Tabela kolorów dla label data.
+        interactor (vtk.vtkRenderWindowInteractor): Interaktor renderera.
+    Returns:
+        tuple: (raw_plane_widget, label_plane_widget)
+    """
+    # Tworzenie plane widget dla raw data (czarno-białe)
+    raw_plane = vtk.vtkImagePlaneWidget()
+    raw_plane.SetInputConnection(raw_reader.GetOutputPort())
+    
+    # Tworzenie plane widget dla label data (kolorowe)
+    label_plane = vtk.vtkImagePlaneWidget()
+    label_plane.SetInputConnection(label_reader.GetOutputPort())
+    
+    # Ustawienie orientacji płaszczyzny
+    if orientation == "X":
+        raw_plane.SetPlaneOrientationToXAxes()
+        label_plane.SetPlaneOrientationToXAxes()
+    elif orientation == "Y":
+        raw_plane.SetPlaneOrientationToYAxes()
+        label_plane.SetPlaneOrientationToYAxes()
+    elif orientation == "Z":
+        raw_plane.SetPlaneOrientationToZAxes()
+        label_plane.SetPlaneOrientationToZAxes()
+    
+    # Konfiguracja raw plane
+    raw_lut = vtk.vtkLookupTable()
+    raw_lut.SetRange(0, 1000)
+    raw_lut.SetHueRange(0.0, 0.0)
+    raw_lut.SetSaturationRange(0.0, 0.0)
+    raw_lut.SetValueRange(0.0, 1.0)
+    raw_lut.Build()
+    raw_plane.SetLookupTable(raw_lut)
+    
+    # Konfiguracja label plane
+    label_plane.SetLookupTable(lut)
+    label_plane.SetColorMap(label_plane.GetColorMap())
+    
+    # Ustawienie interaktora
+    raw_plane.SetInteractor(interactor)
+    label_plane.SetInteractor(interactor)
+    
+    # Synchronizacja płaszczyzn
+    raw_plane.AddObserver("InteractionEvent", lambda obj, event: label_plane.SetSlicePosition(obj.GetSlicePosition()))
+    label_plane.AddObserver("InteractionEvent", lambda obj, event: raw_plane.SetSlicePosition(obj.GetSlicePosition()))
+    
+    raw_plane.On()
+    label_plane.On()
+    
+    return raw_plane, label_plane
+
+
+def main():
+    # Ścieżki do plików
+    raw_data_path = "C:\\Users\\PC\\Desktop\\liver-2014-02-20\\volumes\\grayscale\\IM-0001-0015.dcm.nrrd"
+    label_data_path = "C:\\Users\\PC\\Desktop\\liver-2014-02-20\\volumes\\labels\\combined.nrrd"
+
+    # Wczytanie danych
+    raw_reader = load_nrrd_file(raw_data_path)
+    label_reader = load_nrrd_file(label_data_path)
+
+    # Zdefiniowanie kolorów dla segmentów
+    segments = {
+        1: (255, 0, 0),      # Red
+        2: (0, 255, 0),      # Green
+        3: (0, 0, 255),      # Blue
+        4: (255, 255, 0),    # Yellow
+        5: (255, 0, 255),    # Magenta
+        6: (163, 59, 243),   # Custom Color
+        7: (128, 0, 0),      # Maroon
+        8: (128, 128, 0),    # Olive
+        9: (0, 128, 0),      # Dark Green
+        10: (128, 0, 128),   # Purple
+        12: (0, 128, 128),   # Teal
+        15: (0, 0, 128),     # Navy
+        17: (192, 192, 192), # Silver
+        18: (128, 128, 128), # Gray
+        24: (255, 165, 0),   # Orange
+        26: (255, 20, 147),  # Deep Pink
+        33: (75, 0, 130),    # Indigo
+        40: (255, 69, 0),    # Orange Red
+        41: (173, 255, 47),  # Green Yellow
+        42: (0, 255, 127),   # Spring Green
+        43: (70, 130, 180),  # Steel Blue
+        44: (240, 230, 140), # Khaki
+        45: (255, 105, 180)  # Hot Pink
+    }
+
+    # Tworzenie renderera i dodanie konturu
+    renderer = vtk.vtkRenderer()
+
+    outline_actor = create_outline(raw_reader)
+    renderer.AddActor(outline_actor)
+
+    # Dodanie aktorów dla segmentów
+    sample_actors = []
+    for label_value, color in segments.items():
+        sample_actor = create_segment_actor(label_reader, label_value, color, opacity=1)
+        renderer.AddActor(sample_actor)
+        sample_actors.append(sample_actor)
+
+    renderer.SetBackground(0.1, 0.2, 0.4)
+
+
+    # Utworzenie lookup table
+    lut = create_lookup_table_from_segments(segments)
+
+    # Tworzenie okna renderowania
+    ren_win = vtk.vtkRenderWindow()
+    ren_win.AddRenderer(renderer)
+    ren_win.SetSize(800, 800)
+
+    # Ustawienie interaktora
+    interactor = vtk.vtkRenderWindowInteractor()
+    interactor.SetRenderWindow(ren_win)
+    
+    # Utworzenie suwaka do zmiany przezroczystości
+    def slider_callback(obj, event):
+        value = obj.GetRepresentation().GetValue()
+        for actor in sample_actors:
+            actor.GetProperty().SetOpacity(value)
+        ren_win.Render()
+
+    # Ustawienia suwaka
+    slider_rep = vtk.vtkSliderRepresentation2D()
+    slider_rep.SetMinimumValue(0.0)
+    slider_rep.SetMaximumValue(1.0)
+    slider_rep.SetValue(1.0)
+    slider_rep.SetTitleText("Opacity")
+
+    slider_rep.GetSliderProperty().SetColor(1, 0, 0)  
+    slider_rep.GetTitleProperty().SetColor(1, 1, 1) 
+    slider_rep.GetLabelProperty().SetColor(1, 1, 1)  
+    slider_rep.GetSelectedProperty().SetColor(0, 1, 0)  
+    slider_rep.GetTubeProperty().SetColor(0.8, 0.8, 0.8)  
+
+    slider_rep.GetPoint1Coordinate().SetCoordinateSystemToNormalizedDisplay()
+    slider_rep.GetPoint1Coordinate().SetValue(0.1, 0.1)
+    slider_rep.GetPoint2Coordinate().SetCoordinateSystemToNormalizedDisplay()
+    slider_rep.GetPoint2Coordinate().SetValue(0.4, 0.1)
+
+    slider_widget = vtk.vtkSliderWidget()
+    slider_widget.SetInteractor(interactor)
+    slider_widget.SetRepresentation(slider_rep)
+    slider_widget.SetAnimationModeToJump()
+    slider_widget.EnabledOn()
+    slider_widget.AddObserver("InteractionEvent", slider_callback)
+
+
+    # Utworzenie płaszczyzn
+    plane_x_raw, plane_x_label = create_plane_widget(raw_reader, label_reader, "X", lut, interactor)
+    plane_y_raw, plane_y_label = create_plane_widget(raw_reader, label_reader, "Y", lut, interactor)
+    plane_z_raw, plane_z_label = create_plane_widget(raw_reader, label_reader, "Z", lut, interactor)
+
+    # Ustawienie pozycji płaszczyzn
+    camera = vtk.vtkCamera()
+    camera.SetViewUp(0, 1, 0)
+    camera.SetPosition(0, -500, 500)
+    camera.SetFocalPoint(0, 0, 0)
+    camera.ComputeViewPlaneNormal()
+
+    renderer.SetActiveCamera(camera)
+    renderer.ResetCamera()
+    camera.Dolly(1.5)
+    renderer.ResetCameraClippingRange()
+
+
+    # Rozpoczęcie interakcji
+    renderer.ResetCamera()
+    interactor.Initialize()
+    ren_win.Render()
+    interactor.Start()
+
+if __name__ == "__main__":
+    main()
